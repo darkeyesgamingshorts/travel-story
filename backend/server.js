@@ -110,6 +110,14 @@ const auth = (req, res, next) => {
     }
 };
 
+
+/* ================= HOME ================= */
+
+app.get("/", (req,res)=>{
+  res.send("API Running");
+});
+
+
 /* ================= LOGIN ================= */
 
 app.post("/login", async (req, res) => {
