@@ -1,0 +1,362 @@
+/* ==========================================================================
+   1. GLOBAL PAGE & BASE STYLES
+   ========================================================================== */
+.addstory-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0f172a, #1e3a8a);
+  padding: 20px;
+  font-family: "Poppins", system-ui, sans-serif;
+}
+
+.addstory-page * {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   2. TWO-PANEL SPLIT MAIN CARD
+   ========================================================================== */
+.addstory-card {
+  width: 950px;
+  min-height: 560px;
+  display: flex;
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+/* LEFT PANEL (Feature Hero Artwork Display) */
+.left-panel {
+  flex: 1;
+  position: relative;
+}
+
+.left-panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.left-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.75),
+    rgba(0, 0, 0, 0.1)
+  );
+}
+
+.overlay-text {
+  position: absolute;
+  bottom: 35px;
+  left: 30px;
+  z-index: 2;
+  color: white;
+}
+
+.overlay-text h2 {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+.overlay-text p {
+  font-size: 15px;
+  color: #cbd5e1;
+}
+
+/* RIGHT PANEL (Form Workspace Area) */
+.right-panel {
+  flex: 1;
+  padding: 40px;
+  background: rgba(15, 23, 42, 0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.right-panel h2 {
+  font-size: 34px;
+  color: white;
+  margin-bottom: 6px;
+}
+
+.right-panel p {
+  color: #94a3b8;
+  margin-bottom: 25px;
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   3. INNER INTERACTIVE FORM ELEMENTS
+   ========================================================================== */
+.addstory-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.addstory-page input,
+.addstory-page textarea {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  background: #1e293b;
+  color: white;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.addstory-page textarea {
+  min-height: 110px;
+  max-height: 160px;
+  resize: vertical;
+}
+
+.addstory-page input::placeholder,
+.addstory-page textarea::placeholder {
+  color: #94a3b8;
+}
+
+.addstory-page input:focus,
+.addstory-page textarea:focus {
+  background: #334155;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* ==========================================================================
+   4. FILE UPLOADER & WORKSPACE PREVIEWS
+   ========================================================================== */
+/* Completely hidden stock file picker */
+.addstory-page input[type="file"] {
+  display: none;
+}
+
+/* Custom file click container selector layer */
+.custom-file-upload {
+  display: block;
+  text-align: center;
+  padding: 14px;
+  background: #1e293b;
+  color: #cbd5e1;
+  border-radius: 14px;
+  cursor: pointer;
+  border: 1px dashed #475569;
+  font-size: 15px;
+  transition: background 0.2s;
+}
+
+.custom-file-upload:hover {
+  background: #334155;
+  color: white;
+}
+
+/* Embedded inline result preview container */
+.image-preview {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.image-preview p {
+  color: #94a3b8;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid #334155;
+}
+
+/* ==========================================================================
+   5. ACTION CONTROL BUTTONS
+   ========================================================================== */
+.addstory-page button[type="submit"] {
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.addstory-page button[type="submit"]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.35);
+}
+
+/* ==========================================================================
+   6. INTERACTIVE POP-UP CROPPER OVERLAY MODAL SYSTEM
+   ========================================================================== */
+.cropper-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Higher than everything else on page view */
+}
+
+.cropper-modal-content {
+  background: #1e293b;
+  padding: 24px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 460px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+  color: white;
+}
+
+.cropper-modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 20px;
+}
+
+.crop-container {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  background: #0f172a;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.cropper-controls {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cropper-controls label {
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+.cropper-controls input[type="range"] {
+  width: 100%;
+  accent-color: #3b82f6;
+  background: #334155;
+  height: 6px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.cropper-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.cropper-buttons button {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.cancel-btn {
+  background: #334155;
+  color: #cbd5e1;
+}
+
+.cancel-btn:hover {
+  background: #475569;
+  color: white;
+}
+
+.save-btn {
+  background: #3b82f6;
+  color: white;
+}
+
+.save-btn:hover {
+  background: #2563eb;
+}
+
+/* ==========================================================================
+   7. MOBILE RESPONSIVE MEDIA BREAKPOINTS
+   ========================================================================== */
+@media (max-width: 950px) {
+  .addstory-card {
+    flex-direction: column;
+    width: 95%;
+    min-height: auto;
+  }
+
+  .left-panel {
+    height: 220px;
+  }
+
+  .right-panel {
+    padding: 25px;
+  }
+}
+/* Completely hide the default browser file input layout */
+.addstory-page input[type="file"] {
+  display: none;
+}
+
+/* Style the label to look exactly like a custom action button */
+.custom-file-upload {
+  display: block;
+  text-align: center;
+  padding: 14px;
+  background: #1e293b;
+  color: #cbd5e1;
+  border-radius: 14px;
+  cursor: pointer;
+  border: 1px dashed #475569;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.custom-file-upload:hover {
+  background: #334155;
+  color: #ffffff;
+  border-color: #3b82f6;
+}.file-upload-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Success layout indicator box styling configuration */
+.file-status-success {
+  background: rgba(34, 197, 94, 0.1); /* Subtle transparent green background background tint */
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #4ade80; /* High contrast energetic neon text coloring */
+  word-break: break-all; /* Prevents overflow layouts breaking if a user uploads a very long file string name */
+  display: flex;
+  align-items: center;
+}
+

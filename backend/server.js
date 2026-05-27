@@ -1,0 +1,356 @@
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const path = require("path");
+
+const app = express();
+
+/* ================= MIDDLEWARE ================= */
+
+app.use(cors());
+app.use(express.json());
+app.use("/uploads", express.static("uploads"));
+app.use("/assets", express.static("assets"));
+
+/* ================= CONFIG ================= */
+
+const PORT = 5000;
+const JWT_SECRET = "travelsecret";
+
+/* ================= DATABASE ================= */
+
+mongoose.connect("mongodb://127.0.0.1:27017/travel-story")
+.then(() => console.log("MongoDB Connected"))
+.catch(err => console.log(err));
+
+/* ================= MODELS ================= */
+
+const User = mongoose.model(
+    "users",
+    new mongoose.Schema({
+        name: String,
+        email: {
+            type: String,
+            unique: true
+        },
+        password: String
+    })
+);
+
+const Story = mongoose.model(
+    "travelstories",
+    new mongoose.Schema({
+        title: String,
+        story: String,
+        visitedLocation: String,
+        visitedDate: String,
+        image: String,
+        createdBy: String,
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
+    })
+);
+
+/* ================= MULTER ================= */
+
+const storage = multer.diskStorage({
+    destination: "./uploads",
+
+    filename: (req, file, cb) => {
+        cb(
+            null,
+            Date.now() +
+            path.extname(file.originalname)
+        );
+    }
+});
+
+const upload = multer({ storage });
+
+/* ================= AUTH FIXED ================= */
+
+const auth = (req, res, next) => {
+
+    const authHeader =
+        req.headers.authorization;
+
+    if (!authHeader) {
+        return res.status(401).json({
+            message: "No token"
+        });
+    }
+
+    const token =
+        authHeader.startsWith("Bearer ")
+            ? authHeader.split(" ")[1]
+            : authHeader;
+
+    try {
+
+        const decoded =
+            jwt.verify(
+                token,
+                JWT_SECRET
+            );
+
+        req.user = decoded;
+
+        next();
+
+    } catch (err) {
+
+        return res.status(401).json({
+            message: "Invalid token"
+        });
+    }
+};
+
+/* ================= LOGIN ================= */
+
+app.post("/login", async (req, res) => {
+
+    try {
+
+        const { email, password } =
+            req.body;
+
+        const user =
+            await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({
+                message: "User not found"
+            });
+        }
+
+        const valid =
+            await bcrypt.compare(
+                password,
+                user.password
+            );
+
+        if (!valid) {
+            return res.status(400).json({
+                message: "Wrong password"
+            });
+        }
+
+        const token = jwt.sign(
+            { id: user._id },
+            JWT_SECRET
+        );
+
+        res.json({
+            token,
+            user
+        });
+
+    } catch (err) {
+
+        res.status(500).json(err);
+    }
+});
+
+/* ================= REGISTER ================= */
+
+app.post("/create-account", async (req, res) => {
+
+    try {
+
+        const {
+            name,
+            email,
+            password
+        } = req.body;
+
+        const existing =
+            await User.findOne({ email });
+
+        if (existing) {
+            return res.status(400).json({
+                message: "User already exists"
+            });
+        }
+
+        const hashed =
+            await bcrypt.hash(
+                password,
+                10
+            );
+
+        const user =
+            new User({
+                name,
+                email,
+                password: hashed
+            });
+
+        await user.save();
+
+        res.json({
+            message: "Account created"
+        });
+
+    } catch (err) {
+
+        res.status(500).json(err);
+    }
+});
+
+/* ================= PUBLIC STORIES ================= */
+
+app.get("/public-stories", async (req, res) => {
+
+    const stories =
+        await Story.find()
+        .sort({ createdAt: -1 });
+
+    res.json(stories);
+});
+
+/* ================= USER STORIES ================= */
+
+app.get(
+    "/search-stories",
+    auth,
+    async (req, res) => {
+
+        const stories =
+            await Story.find({
+                createdBy:
+                    req.user.id
+            });
+
+        res.json(stories);
+    }
+);
+
+/* ================= STORY DETAILS ================= */
+
+app.get(
+    "/story/:id",
+    auth,
+    async (req, res) => {
+
+        const story =
+            await Story.findById(
+                req.params.id
+            );
+
+        res.json(story);
+    }
+);
+
+/* ================= ADD STORY ================= */
+
+app.post(
+    "/upload-image",
+    auth,
+    upload.single("image"),
+
+    async (req, res) => {
+
+        try {
+
+            const story =
+                new Story({
+
+                    title:
+                        req.body.title,
+
+                    story:
+                        req.body.story,
+
+                    visitedLocation:
+                        req.body.visitedLocation,
+
+                    visitedDate:
+                        req.body.visitedDate,
+
+                    image:
+                        req.file
+                            ? req.file.filename
+                            : "",
+
+                    createdBy:
+                        req.user.id
+                });
+
+            await story.save();
+
+            res.json({
+                success: true,
+                imageUrl: story.image,
+                story
+            });
+
+        } catch (err) {
+
+            res.status(500).json(err);
+        }
+    }
+);
+
+/* ================= EDIT STORY ================= */
+
+app.put(
+  "/edit-travel-story/:id",
+  auth,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const updatedData = {
+        title: req.body.title,
+        story: req.body.story,
+        visitedLocation: req.body.visitedLocation,
+        visitedDate: req.body.visitedDate,
+      };
+
+      if (req.file) {
+        updatedData.image = req.file.filename;
+      }
+
+      const story = await Story.findByIdAndUpdate(
+        req.params.id,
+        updatedData,
+        { new: true }
+      );
+
+      res.json(story);
+
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }
+);
+
+/* ================= DELETE STORY ================= */
+
+app.delete(
+    "/delete-story/:id",
+    auth,
+    async (req, res) => {
+
+        await Story.findByIdAndDelete(
+            req.params.id
+        );
+
+        res.json({
+            message: "Deleted"
+        });
+    }
+);
+
+/* ================= SERVER ================= */
+
+app.listen(PORT, () => {
+
+    console.log(
+        `Server running on port ${PORT}`
+    );
+});

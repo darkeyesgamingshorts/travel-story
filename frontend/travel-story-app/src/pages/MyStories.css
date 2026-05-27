@@ -1,0 +1,580 @@
+/* Prefix wrapper ensures no leakage onto other application pages */
+.mystories-page-wrapper {
+  min-height: 100vh;
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 40px;
+  font-family: "Poppins", system-ui, sans-serif;
+  box-sizing: border-box;
+}
+
+.mystories-page-wrapper * {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   NAVBAR LAYOUT
+   ========================================================================== */
+.mystories-page-wrapper .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto 40px auto;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 20px;
+}
+
+.mystories-page-wrapper .navbar .logo {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.mystories-page-wrapper .navbar .signup-btn {
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mystories-page-wrapper .navbar .signup-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
+}
+
+/* ==========================================================================
+   SEARCH BOX STYLING
+   ========================================================================== */
+.mystories-page-wrapper .search-box {
+  display: flex;
+  gap: 12px;
+  max-width: 600px;
+  margin: 0 auto 50px auto;
+}
+
+.mystories-page-wrapper .search-box input {
+  flex: 1;
+  padding: 14px 20px;
+  border-radius: 14px;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: white;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.mystories-page-wrapper .search-box input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.mystories-page-wrapper .search-box input::placeholder {
+  color: #64748b;
+}
+
+.mystories-page-wrapper .search-box button {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 14px;
+  background: #334155;
+  color: #cbd5e1;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mystories-page-wrapper .search-box button:hover {
+  background: #475569;
+  color: white;
+}
+
+/* ==========================================================================
+   RESPONSIVE STORIES CONTAINER GRID
+   ========================================================================== */
+.mystories-page-wrapper .stories-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.mystories-page-wrapper .story-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
+}
+
+/* ==========================================================================
+   INDIVIDUAL STORY CARD BLOCK
+   ========================================================================== */
+.mystories-page-wrapper .story-card {
+  background: #1e293b;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #334155;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.mystories-page-wrapper .image-container {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: #0f172a;
+}
+
+.mystories-page-wrapper .image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.mystories-page-wrapper .story-card:hover .image-container img {
+  transform: scale(1.05);
+}
+
+.mystories-page-wrapper .story-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.mystories-page-wrapper .story-content h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+  color: white;
+  line-height: 1.4;
+}
+
+.mystories-page-wrapper .story-date {
+  font-size: 13px;
+  color: #64748b;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.mystories-page-wrapper .story-content p {
+  font-size: 14px;
+  color: #94a3b8;
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+}
+
+.mystories-page-wrapper .location-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #0f172a;
+  color: #3b82f6;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  width: fit-content;
+  margin-bottom: 24px;
+}
+
+/* ==========================================================================
+   ROW MULTI-ACTION MANAGEMENT ACTIONS BUTTONS
+   ========================================================================== */
+.mystories-page-wrapper .story-content .actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.mystories-page-wrapper .story-content .actions button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mystories-page-wrapper .story-content .actions button:nth-child(1) {
+  background: #334155;
+  color: #cbd5e1;
+}
+
+.mystories-page-wrapper .story-content .actions button:nth-child(1):hover {
+  background: #475569;
+  color: white;
+}
+
+.mystories-page-wrapper .story-content .actions button:nth-child(2) {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.mystories-page-wrapper .story-content .actions button:nth-child(2):hover {
+  background: #ef4444;
+  color: white;
+}
+
+.mystories-page-wrapper .story-content .actions button:nth-child(3) {
+  background: #3b82f6;
+  color: white;
+}
+
+.mystories-page-wrapper .story-content .actions button:nth-child(3):hover {
+  background: #2563eb;
+}
+
+/* ==========================================================================
+   DOUBLE CONFIRMATION MODAL VISUAL LAYERS
+   ========================================================================== */
+.mystories-page-wrapper .delete-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.mystories-page-wrapper .delete-modal-content {
+  background: #ffffff;
+  color: #1e293b;
+  padding: 32px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+.mystories-page-wrapper .close-x-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.mystories-page-wrapper .close-x-btn:hover {
+  color: #475569;
+}
+
+.mystories-page-wrapper .modal-header-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mystories-page-wrapper .warning-triangle-icon {
+  font-size: 24px;
+}
+
+.mystories-page-wrapper .delete-modal-content h3 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.mystories-page-wrapper .modal-description-text {
+  font-size: 15px;
+  color: #475569;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+}
+
+.mystories-page-wrapper .confirmation-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.mystories-page-wrapper .confirmation-input-wrapper label {
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.mystories-page-wrapper .confirmation-input-wrapper input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.mystories-page-wrapper .confirmation-input-wrapper input:focus {
+  border-color: #3b82f6;
+  background: #ffffff;
+}
+
+.mystories-page-wrapper .modal-action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.mystories-page-wrapper .modal-action-buttons button {
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.mystories-page-wrapper .modal-cancel-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569;
+}
+
+.mystories-page-wrapper .modal-cancel-btn:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.mystories-page-wrapper .modal-danger-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.mystories-page-wrapper .modal-danger-btn:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+.mystories-page-wrapper .modal-danger-btn:disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINT SCALES
+   ========================================================================== */
+@media (max-width: 640px) {
+  .mystories-page-wrapper {
+    padding: 20px;
+  }
+  
+  .mystories-page-wrapper .navbar {
+    margin-bottom: 30px;
+  }
+
+  .mystories-page-wrapper .navbar .logo {
+    font-size: 22px;
+  }
+
+  .mystories-page-wrapper .search-box {
+    margin-bottom: 35px;
+  }
+}
+
+
+
+.delete-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  backdrop-filter: blur(8px);
+}
+
+.delete-modal-content {
+  width: 760px;
+  max-width: 92%;
+  background: white;
+  border-radius: 26px;
+  padding: 40px;
+  position: relative;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.25);
+  animation: pop 0.25s ease;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.close-x-btn {
+  position: absolute;
+  right: 24px;
+  top: 20px;
+  border: none;
+  background: none;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.modal-header-block {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.warning-icon {
+  width: 48px;
+  height: 48px;
+  background: #ffe7e7;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
+
+.modal-header-block h2 {
+  font-size: 38px;
+  color: #102a43;
+  margin: 0;
+}
+
+.modal-description-text {
+  margin-top: 22px;
+  font-size: 20px;
+  color: #334e68;
+}
+
+.confirm-label {
+  display: block;
+  margin-top: 28px;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.confirm-input {
+  width: 100%;
+  margin-top: 14px;
+  padding: 18px;
+  font-size: 18px;
+  border-radius: 14px;
+  border: 3px solid #2563eb;
+  outline: none;
+}
+
+.modal-action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 34px;
+}
+
+.cancel-btn {
+  padding: 14px 24px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  cursor: pointer;
+  font-size: 17px;
+}
+
+.drop-btn {
+  padding: 14px 24px;
+  border-radius: 12px;
+  border: none;
+  background: #dbeafe;
+  color: #64748b;
+  cursor: not-allowed;
+  font-size: 17px;
+}
+
+.drop-btn:not(:disabled) {
+  background: #ef4444;
+  color: white;
+  cursor: pointer;
+}
+
+
+
+//Navbar and Logout Button styling for My Stories page
+.mystories-page-wrapper .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1250px;
+  margin: 0 auto 40px auto;
+  padding: 20px 40px;
+  background: white;
+  border-radius: 16px;
+}
+
+.mystories-page-wrapper .logo {
+  font-size: 38px;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.mystories-page-wrapper .story-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.add-story-btn {
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  color: white;
+  padding: 14px 26px;
+  border: none;
+  border-radius: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.add-story-btn:hover {
+  transform: translateY(-3px);
+}
+
+.logout-btn {
+  background: #ef4444;
+  color: white;
+  padding: 14px 26px;
+  border: none;
+  border-radius: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.logout-btn:hover {
+  color: white;
+  background: #dc2626;
+  transform: translateY(-3px);
+}
