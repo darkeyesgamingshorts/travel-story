@@ -215,12 +215,18 @@ app.post("/create-account", async (req, res) => {
 /* ================= PUBLIC STORIES ================= */
 
 app.get("/public-stories", async (req, res) => {
-
-    const stories =
-        await Story.find()
-        .sort({ createdAt: -1 });
+  try {
+    const stories = await Story.find().sort({
+      createdAt: -1,
+    });
 
     res.json(stories);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: err.message,
+    });
+  }
 });
 
 /* ================= USER STORIES ================= */
