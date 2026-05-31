@@ -24,15 +24,15 @@ const Login = () => {
     e.preventDefault();
 
     try {
+      const API_URL = import.meta.env.VITE_API_URL;
 
-      const response =
-        await axios.post(
-          "https://travel-story-backend.onrender.com/login",
-          {
-            email,
-            password,
-          }
-        );
+      const response = await axios.post(
+        `${API_URL}/login`,
+        {
+          email,
+          password,
+        }
+      );
 
       localStorage.setItem(
         "token",
