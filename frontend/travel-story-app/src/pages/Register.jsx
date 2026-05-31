@@ -42,7 +42,7 @@ const Register = () => {
         {/* LEFT BRANDING SIDE */}
         <div className="login-left">
           <img
-            src="http://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
             alt="Travel background"
           />
           
