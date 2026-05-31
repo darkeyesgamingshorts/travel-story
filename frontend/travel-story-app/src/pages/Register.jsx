@@ -17,13 +17,13 @@ const Register = () => {
 
     try {
       await axios.post(
-        `${API_URL}/create-account`,
-        {
-          fullName,
-          email,
-          password,
-        }
-      );
+  `${API_URL}/create-account`,
+  {
+    name: fullName,
+    email,
+    password,
+  }
+);
 
       navigate("/login");
     } catch (error) {
