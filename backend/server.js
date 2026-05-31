@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -16,15 +18,15 @@ app.use("/uploads", express.static("uploads"));
 app.use("/assets", express.static("assets"));
 
 /* ================= CONFIG ================= */
-
-const PORT = 5000;
-const JWT_SECRET = "travelsecret";
+const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 /* ================= DATABASE ================= */
 
-mongoose.connect("mongodb://127.0.0.1:27017/travel-story")
-.then(() => console.log("MongoDB Connected"))
-.catch(err => console.log(err));
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
+
 
 /* ================= MODELS ================= */
 
