@@ -3,6 +3,8 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import "./Login.css"; // Reusing your exact login styles
 
+import API_URL from "../config";
+ 
 const Register = () => {
   const navigate = useNavigate();
 
@@ -15,7 +17,7 @@ const Register = () => {
 
     try {
       await axios.post(
-        "https://travel-story-backend.onrender.com/create-account",
+        `${API_URL}/create-account`,
         {
           fullName,
           email,
