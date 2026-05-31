@@ -30,7 +30,7 @@ const AddStory = () => {
       }
 
       await axios.post(
-        "http://localhost:5000/upload-image",
+        "https://travel-story-backend.onrender.com/upload-image",
         formData,
         {
           headers: {

@@ -78,7 +78,7 @@ const MyStories = () => {
 
     try {
       await axios.delete(
-        `http://localhost:5000/delete-story/${storyToDelete._id}`,
+        `https://travel-story-backend.onrender.com/delete-story/${storyToDelete._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

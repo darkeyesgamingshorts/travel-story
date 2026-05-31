@@ -14,7 +14,7 @@ const Home = () => {
   const getPublicStories = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/public-stories"
+        "https://travel-story-backend.onrender.com/public-stories"
       );
 
       setStories(response.data || []);

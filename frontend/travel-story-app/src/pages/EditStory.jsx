@@ -143,7 +143,7 @@ const handleUpdate = async (e) => {
 
   try {
     const res = await axios.put(
-      `http://localhost:5000/edit-travel-story/${id}`,
+      `https://travel-story-backend.onrender.com/edit-travel-story/${id}`,
       formData,
       {
         headers: {

@@ -15,7 +15,7 @@ const Register = () => {
 
     try {
       await axios.post(
-        "http://localhost:5000/create-account",
+        "https://travel-story-backend.onrender.com/create-account",
         {
           fullName,
           email,

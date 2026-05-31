@@ -14,7 +14,7 @@ const StoryDetails = () => {
     const token = localStorage.getItem("token");
 
     axios
-      .get(`http://localhost:5000/story/${id}`, {
+      .get(`https://travel-story-backend.onrender.com/story/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
