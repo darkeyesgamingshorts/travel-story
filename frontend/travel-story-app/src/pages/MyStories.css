@@ -523,17 +523,7 @@
 
 
 
-//Navbar and Logout Button styling for My Stories page
-.mystories-page-wrapper .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1250px;
-  margin: 0 auto 40px auto;
-  padding: 20px 40px;
-  background: white;
-  border-radius: 16px;
-}
+
 
 .mystories-page-wrapper .logo {
   font-size: 38px;
