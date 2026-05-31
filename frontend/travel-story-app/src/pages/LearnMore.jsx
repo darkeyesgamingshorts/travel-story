@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Dashboard.css"; // Reuses your master layouts
-import "./LearnMore.css"; // Your new custom stylesheets
+import "./Dashboard.css"; // Reuses your global app frame styles
+import styles from "./LearnMore.module.css"; // Isolated CSS Modules import
 
 const LearnMore = () => {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const LearnMore = () => {
       <div className="bg-glow" />
 
       {/* HERO SECTION */}
-      <div className="dashboard-hero learn-more-hero">
+      <div className={`dashboard-hero ${styles.learnMoreHero}`}>
         <section className="hero-text-side">
           <span className="badge">Project Insights</span>
           <h1 className="hero-title">
@@ -71,33 +71,33 @@ const LearnMore = () => {
 
         {/* PROFILE CARD */}
         <section className="hero-visual-side">
-          <div className="glass-card-wrapper dev-profile-card">
-            <div className="profile-header">
-              <div className="avatar-placeholder">AS</div>
+          <div className={`glass-card-wrapper ${styles.devProfileCard}`}>
+            <div className={styles.profileHeader}>
+              <div className={styles.avatarPlaceholder}>AS</div>
               <div>
-                <h2 className="dev-name">Aditya Shah</h2>
-                <p className="dev-title">Full-Stack Developer</p>
+                <h2 className={styles.devName}>Aditya Shah</h2>
+                <p className={styles.devTitle}>Full-Stack Engineer & Founder</p>
               </div>
             </div>
 
-            <div className="info-divider" />
+            <div className={styles.infoDivider} />
 
-            <div className="contact-row">
-              <span className="icon-span">📞</span>
-              <a href="tel:+919329621234" className="contact-link">+91 9329621234</a>
+            <div className={styles.contactRow}>
+              <span className={styles.iconSpan}>📞</span>
+              <a href="tel:+919329621234" className={styles.contactLink}>+91 9329621234</a>
             </div>
             
-            <div className="contact-row">
-              <span className="icon-span">✉️</span>
-              <a href="mailto:darkeyesgamingshorts@gmail.com" className="contact-link">darkeyesgamingshorts@gmail.com</a>
+            <div className={styles.contactRow}>
+              <span className={styles.iconSpan}>✉️</span>
+              <a href="mailto:darkeyesgamingshorts@gmail.com" className={styles.contactLink}>darkeyesgamingshorts@gmail.com</a>
             </div>
 
-            <div className="social-grid">
+            <div className={styles.socialGrid}>
               <a 
                 href="https://linkedin.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="linkedin-btn"
+                className={styles.linkedinBtn}
               >
                 Connect on LinkedIn
               </a>
@@ -105,7 +105,7 @@ const LearnMore = () => {
                 href="https://instagram.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="instagram-btn"
+                className={styles.instagramBtn}
               >
                 Follow on Instagram
               </a>
@@ -134,50 +134,50 @@ const LearnMore = () => {
       </section>
 
       {/* INTERACTIVE FORM SECTION */}
-      <section className="contact-section">
-        <div className="contact-content">
-          <h2 className="section-heading">Have Questions? <span className="gradient-text">Get In Touch</span></h2>
-          <p className="section-subtext">Drop Aditya a quick line right here to discuss collaborations, source contributions, or custom feature requests.</p>
+      <section className={styles.contactSection}>
+        <div className={styles.contactContent}>
+          <h2 className={styles.sectionHeading}>Have Questions? <span className="gradient-text">Get In Touch</span></h2>
+          <p className={styles.sectionSubtext}>Drop Aditya a quick line right here to discuss collaborations, source contributions, or custom feature requests.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="form-container">
-          <div className="input-group">
-            <label className="input-label">Your Name</label>
+        <form onSubmit={handleSubmit} className={styles.formContainer}>
+          <div className={styles.inputGroup}>
+            <label className={styles.inputLabel}>Your Name</label>
             <input 
               type="text" 
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              placeholder="xyz" 
-              className="input-field" 
+              placeholder="John Doe" 
+              className={styles.inputField} 
             />
           </div>
 
-          <div className="input-group">
-            <label className="input-label">Email Address</label>
+          <div className={styles.inputGroup}>
+            <label className={styles.inputLabel}>Email Address</label>
             <input 
               type="email" 
               name="email"
               value={formData.email}
               onChange={handleInputChange}
               placeholder="you@example.com" 
-              className="input-field" 
+              className={styles.inputField} 
             />
           </div>
 
-          <div className="input-group">
-            <label className="input-label">Message</label>
+          <div className={styles.inputGroup}>
+            <label className={styles.inputLabel}>Message</label>
             <textarea 
               name="message"
               rows="4"
               value={formData.message}
               onChange={handleInputChange}
               placeholder="Hey Aditya, I loved your Travel Story application..." 
-              className="textarea-field"
+              className={styles.textareaField}
             />
           </div>
 
-          <button type="submit" className="submit-btn">
+          <button type="submit" className={styles.submitBtn}>
             Send Message
           </button>
 
