@@ -32,7 +32,7 @@ const Dashboard = () => {
             <button 
               type="button" 
               className="btn-secondary"
-              onClick={() => navigate("/learnmore")}
+              onClick={() => navigate("/learn-more")}
             >
               Learn More
             </button>
