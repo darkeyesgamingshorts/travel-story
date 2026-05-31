@@ -7,7 +7,7 @@ import Register from "./pages/Register";
 import AddStory from "./pages/AddStory";
 import MyStories from "./pages/MyStories";
 import EditStory from "./pages/EditStory";
-
+import LearnMore from "./pages/LearnMore";
 import StoryDetails from "./pages/StoryDetails";
 
 function App() {
@@ -54,6 +54,11 @@ function App() {
       <Route
         path="/story/:id"
         element={<StoryDetails />}
+      />
+
+      <Route
+        path="/learn-more"
+        element={<LearnMore />}
       />
 
     </Routes>
