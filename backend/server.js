@@ -7,6 +7,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs"); // ADD THIS
 
 const app = express();
 
@@ -14,7 +15,13 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static("uploads"));
+
+/* CREATE UPLOADS FOLDER IF NOT EXISTS */
+if (!fs.existsSync("uploads")) {
+    fs.mkdirSync("uploads", { recursive: true });
+}
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/assets", express.static("assets"));
 
 /* ================= CONFIG ================= */
@@ -26,7 +33,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
-
 
 /* ================= MODELS ================= */
 

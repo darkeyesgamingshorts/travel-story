@@ -122,7 +122,7 @@ const EditStory = () => {
 
       setImageFile(croppedFile);
       setPreviewUrl(
-        `${API_URL}/uploads/${croppedFile.name}`
+        URL.createObjectURL(croppedFile)
       );
       setShowCropper(false);
     }, imageFile.type);
