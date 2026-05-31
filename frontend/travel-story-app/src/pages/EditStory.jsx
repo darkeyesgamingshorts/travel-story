@@ -48,7 +48,7 @@ const EditStory = () => {
 
         if (s.image) {
           setPreviewUrl(
-            `http://localhost:5000/uploads/${s.image}`
+            `${API_URL}/uploads/${s.image}`
           );
         }
       })
@@ -122,7 +122,7 @@ const EditStory = () => {
 
       setImageFile(croppedFile);
       setPreviewUrl(
-        URL.createObjectURL(blob)
+        `${API_URL}/uploads/${croppedFile.name}`
       );
       setShowCropper(false);
     }, imageFile.type);
