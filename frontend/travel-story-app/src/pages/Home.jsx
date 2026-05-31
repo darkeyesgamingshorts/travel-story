@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
+import API_URL from "../config";
+
 const Home = () => {
   const navigate = useNavigate();
   const [stories, setStories] = useState([]);
@@ -13,9 +15,7 @@ const Home = () => {
 
   const getPublicStories = async () => {
     try {
-      const response = await axios.get(
-        "https://travel-story-backend.onrender.com/public-stories"
-      );
+      const response = await axios.get(`${API_URL}/public-stories`);
 
       setStories(response.data || []);
     } catch (error) {
@@ -59,7 +59,7 @@ const Home = () => {
                 <img
                   src={
                     story.image
-                      ? `http://localhost:5000/uploads/${story.image}`
+                      ? `${API_URL}/uploads/${story.image}`
                       : "https://via.placeholder.com/400"
                   }
                   alt={story.title}

@@ -3,6 +3,9 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import "./StoryDetails.css";
 
+import API_URL from "../config";
+
+
 const StoryDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -14,7 +17,7 @@ const StoryDetails = () => {
     const token = localStorage.getItem("token");
 
     axios
-      .get(`https://travel-story-backend.onrender.com/story/${id}`, {
+      .get(`${API_URL}/story/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -73,7 +76,7 @@ const StoryDetails = () => {
             <img
               src={
                 story.image
-                  ? `http://localhost:5000/uploads/${story.image}`
+                  ? `${API_URL}/uploads/${story.image}`
                   : "https://via.placeholder.com/800x500"
               }
               alt={story.title}

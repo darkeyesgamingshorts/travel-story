@@ -3,6 +3,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./MyStories.css";
 
+import API_URL from "../config";
+
+
 const MyStories = () => {
   const navigate = useNavigate();
 
@@ -21,7 +24,7 @@ const MyStories = () => {
 
     try {
       const response = await axios.get(
-        "http://localhost:5000/search-stories",
+        `${API_URL}/search-stories`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -40,7 +43,7 @@ const MyStories = () => {
 
     try {
       const response = await axios.get(
-        "http://localhost:5000/search-stories",
+        `${API_URL}/search-stories`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -148,7 +151,7 @@ const MyStories = () => {
                 <img
                   src={
                     story.image
-                      ? `http://localhost:5000/uploads/${story.image}`
+                      ? `${API_URL}/uploads/${story.image}`
                       : "http://via.placeholder.com/400"
                   }
                   alt={story.title}

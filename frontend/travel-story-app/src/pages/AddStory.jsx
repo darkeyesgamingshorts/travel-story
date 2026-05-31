@@ -3,6 +3,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./AddStory.css";
 
+import API_URL from "../config";
+
+
 const AddStory = () => {
   const navigate = useNavigate();
 
@@ -29,8 +32,7 @@ const AddStory = () => {
         formData.append("image", image);
       }
 
-      await axios.post(
-        "https://travel-story-backend.onrender.com/upload-image",
+      await axios.post(`${API_URL}/upload-image`,
         formData,
         {
           headers: {

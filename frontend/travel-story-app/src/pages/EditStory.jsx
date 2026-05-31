@@ -4,6 +4,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import Cropper from "react-easy-crop";
 import "./AddStory.css";
 
+import API_URL from "../config";
+
+
 const EditStory = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -27,7 +30,7 @@ const EditStory = () => {
     const token = localStorage.getItem("token");
 
     axios
-      .get(`http://localhost:5000/story/${id}`, {
+      .get(`${API_URL}/story/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -143,7 +146,7 @@ const handleUpdate = async (e) => {
 
   try {
     const res = await axios.put(
-      `https://travel-story-backend.onrender.com/edit-travel-story/${id}`,
+      `${API_URL}/edit-travel-story/${id}`,
       formData,
       {
         headers: {
