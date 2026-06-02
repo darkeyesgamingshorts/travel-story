@@ -82,42 +82,27 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ================= AUTH FIXED ================= */
-
 const auth = (req, res, next) => {
-
-    const authHeader =
-        req.headers.authorization;
+    const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-        return res.status(401).json({
-            message: "No token"
-        });
+        return res.status(401).json({ message: "No token" });
     }
 
-    const token =
-        authHeader.startsWith("Bearer ")
-            ? authHeader.split(" ")[1]
-            : authHeader;
+    // CRITICAL: Ensure .split(" ")[1] has the [1] index at the end
+    const token = authHeader.startsWith("Bearer ")
+        ? authHeader.split(" ")[1] 
+        : authHeader;
 
     try {
-
-        const decoded =
-            jwt.verify(
-                token,
-                JWT_SECRET
-            );
-
+        const decoded = jwt.verify(token, JWT_SECRET);
         req.user = decoded;
-
         next();
-
     } catch (err) {
-
-        return res.status(401).json({
-            message: "Invalid token"
-        });
+        return res.status(401).json({ message: "Invalid token" });
     }
 };
+
 
 
 /* ================= HOME ================= */
