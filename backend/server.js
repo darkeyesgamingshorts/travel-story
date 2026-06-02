@@ -253,24 +253,23 @@ app.get(
 
 /* ================= STORY DETAILS ================= */
 
-app.get(
-  "/story/:id",
-  auth,
-  async (req, res) => {
-    try {
-      const story = await Story.findById(
-        req.params.id
-      );
+app.get("/story/:id", async (req, res) => {
+  try {
+    const story = await Story.findById(req.params.id);
 
-      res.json(story);
-    } catch (err) {
-      res.status(500).json({
-        error: err.message,
+    if (!story) {
+      return res.status(404).json({
+        message: "Story not found",
       });
     }
-  }
-);
 
+    res.json(story);
+  } catch (err) {
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+});
 /* ================= ADD STORY ================= */
 
 app.post(
