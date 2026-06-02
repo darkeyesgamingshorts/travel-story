@@ -150,9 +150,8 @@ const MyStories = () => {
               <div className="image-container">
                 <img
                   src={
-                    story.image
-                      ? `${API_URL}/uploads/${story.image}`
-                      : "http://via.placeholder.com/400"
+                    story.image ||
+                    "http://via.placeholder.com/400"
                   }
                   alt={story.title}
                 />

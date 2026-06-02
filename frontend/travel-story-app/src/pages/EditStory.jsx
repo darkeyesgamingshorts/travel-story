@@ -47,9 +47,7 @@ const EditStory = () => {
         }
 
         if (s.image) {
-          setPreviewUrl(
-            `${API_URL}/uploads/${s.image}`
-          );
+          setPreviewUrl(s.image);
         }
       })
       .catch((err) =>
