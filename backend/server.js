@@ -7,7 +7,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
-const fs = require("fs"); // ADD THIS
+const fs = require("fs"); 
+const cloudinary = require("cloudinary").v2;
 
 const app = express();
 
@@ -27,6 +28,12 @@ app.use("/assets", express.static("assets"));
 /* ================= CONFIG ================= */
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 /* ================= DATABASE ================= */
 
@@ -269,87 +276,107 @@ app.get(
 );
 
 /* ================= ADD STORY ================= */
-
 app.post(
     "/upload-image",
     auth,
     upload.single("image"),
-
     async (req, res) => {
-
         try {
 
-            const story =
-                new Story({
+            let imageUrl = "";
 
-                    title:
-                        req.body.title,
+            if (req.file) {
 
-                    story:
-                        req.body.story,
+                const result = await cloudinary.uploader.upload(
+                    req.file.path,
+                    {
+                        folder: "travel-story"
+                    }
+                );
 
-                    visitedLocation:
-                        req.body.visitedLocation,
+                imageUrl = result.secure_url;
 
-                    visitedDate:
-                        req.body.visitedDate,
+                fs.unlinkSync(req.file.path);
+            }
 
-                    image:
-                        req.file
-                            ? req.file.filename
-                            : "",
-
-                    createdBy:
-                        req.user.id
-                });
+            const story = new Story({
+                title: req.body.title,
+                story: req.body.story,
+                visitedLocation: req.body.visitedLocation,
+                visitedDate: req.body.visitedDate,
+                image: imageUrl,
+                createdBy: req.user.id
+            });
 
             await story.save();
 
             res.json({
                 success: true,
-                imageUrl: story.image,
+                imageUrl,
                 story
             });
 
         } catch (err) {
 
-            res.status(500).json(err);
+            console.error(err);
+
+            res.status(500).json({
+                error: err.message
+            });
         }
     }
 );
 
 /* ================= EDIT STORY ================= */
-
 app.put(
-  "/edit-travel-story/:id",
-  auth,
-  upload.single("image"),
-  async (req, res) => {
-    try {
-      const updatedData = {
-        title: req.body.title,
-        story: req.body.story,
-        visitedLocation: req.body.visitedLocation,
-        visitedDate: req.body.visitedDate,
-      };
+    "/edit-travel-story/:id",
+    auth,
+    upload.single("image"),
+    async (req, res) => {
 
-      if (req.file) {
-        updatedData.image = req.file.filename;
-      }
+        try {
 
-      const story = await Story.findByIdAndUpdate(
-        req.params.id,
-        updatedData,
-        { new: true }
-      );
+            const updatedData = {
+                title: req.body.title,
+                story: req.body.story,
+                visitedLocation: req.body.visitedLocation,
+                visitedDate: req.body.visitedDate,
+            };
 
-      res.json(story);
+            if (req.file) {
 
-    } catch (err) {
-      res.status(500).json(err);
+                const result = await cloudinary.uploader.upload(
+                    req.file.path,
+                    {
+                        folder: "travel-story"
+                    }
+                );
+
+                updatedData.image = result.secure_url;
+
+                fs.unlinkSync(req.file.path);
+            }
+
+            const story =
+                await Story.findByIdAndUpdate(
+                    req.params.id,
+                    updatedData,
+                    { new: true }
+                );
+
+            res.json(story);
+
+        } catch (err) {
+
+            console.error(err);
+
+            res.status(500).json({
+                error: err.message
+            });
+        }
     }
-  }
 );
+
 
 /* ================= DELETE STORY ================= */
 
