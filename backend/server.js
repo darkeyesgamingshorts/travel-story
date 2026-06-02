@@ -28,6 +28,27 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+
+
+
+const streamifier = require("streamifier");
+
+const uploadToCloudinary = (buffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "travel-story",
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+
+    streamifier.createReadStream(buffer).pipe(stream);
+  });
+};
+
 /* ================= DATABASE ================= */
 
 mongoose.connect(process.env.MONGO_URI)
@@ -71,19 +92,9 @@ const Story = mongoose.model(
 
 /* ================= MULTER (FIXED FOR RENDER) ================= */
 
-const storage = multer.diskStorage({
-    destination: "/tmp",
-
-    filename: (req, file, cb) => {
-        cb(
-            null,
-            Date.now() +
-            path.extname(file.originalname)
-        );
-    }
+const upload = multer({
+  storage: multer.memoryStorage(),
 });
-
-const upload = multer({ storage });
 
 /* ================= AUTH FIXED ================= */
 const auth = (req, res, next) => {
@@ -280,124 +291,99 @@ app.get(
 
 /* ================= ADD STORY ================= */
 app.post(
-    "/upload-image",
-    auth,
-    upload.single("image"),
-    async (req, res) => {
-        try {
+  "/upload-image",
+  auth,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      let imageUrl = "";
 
-            let imageUrl = "";
+      if (req.file) {
+        const result = await uploadToCloudinary(
+          req.file.buffer
+        );
 
-            if (req.file) {
+        imageUrl = result.secure_url;
+      }
 
-                console.log("FILE:", req.file);
+      const story = new Story({
+        title: req.body.title,
+        story: req.body.story,
+        visitedLocation: req.body.visitedLocation,
+        visitedDate: req.body.visitedDate,
+        image: imageUrl,
+        createdBy: req.user.id,
+      });
 
-                const result = await cloudinary.uploader.upload(
-                    req.file.path,
-                    {
-                        resource_type: "image",
-                        folder: "travel-story",
-                    }
-                );
+      await story.save();
 
-                console.log("UPLOAD SUCCESS:", result.secure_url);
+      res.json({
+        success: true,
+        story,
+      });
 
-                imageUrl = result.secure_url;
+    } catch (err) {
 
-                // Cleans up the temporary local file safely
-                if (fs.existsSync(req.file.path)) {
-                    fs.unlinkSync(req.file.path);
-                }
-            }
+      console.error(err);
 
-            const story = new Story({
-                title: req.body.title,
-                story: req.body.story,
-                visitedLocation: req.body.visitedLocation,
-                visitedDate: req.body.visitedDate,
-                image: imageUrl,
-                createdBy: req.user.id
-            });
-
-            await story.save();
-
-            res.json({
-                success: true,
-                imageUrl,
-                story
-            });
-
-        } catch (err) {
-
-            console.error("FULL ERROR:", JSON.stringify(err, null, 2));
-
-            res.status(500).json({
-                error: err.message
-            });
-        }
+      res.status(500).json({
+        error: err.message,
+      });
     }
+  }
 );
 
 /* ================= EDIT STORY (FIXED) ================= */
 app.put(
-    "/edit-travel-story/:id",
-    auth,
-    upload.single("image"),
-    async (req, res) => {
+  "/edit-travel-story/:id",
+  auth,
+  upload.single("image"),
+  async (req, res) => {
+    try {
 
-        try {
+      const updatedData = {
+        title: req.body.title,
+        story: req.body.story,
+        visitedLocation: req.body.visitedLocation,
+        visitedDate: req.body.visitedDate,
+      };
 
-            // 1. Build the updated fields map
-            const updatedData = {
-                title: req.body.title,
-                story: req.body.story,
-                visitedLocation: req.body.visitedLocation,
-                visitedDate: req.body.visitedDate,
-            };
+      if (req.file) {
 
-            // 2. If a new image was passed, upload it and append it to update map
-            if (req.file) {
+        const result = await uploadToCloudinary(
+          req.file.buffer
+        );
 
-                const result = await cloudinary.uploader.upload(
-                    req.file.path,
-                    {
-                        folder: "travel-story"
-                    }
-                );
+        updatedData.image = result.secure_url;
 
-                updatedData.image = result.secure_url;
+      } else if (req.body.image) {
 
-                if (fs.existsSync(req.file.path)) {
-                    fs.unlinkSync(req.file.path);
-                }
-            } else if (req.body.image) {
-                // Keep the old image URL intact if no new file is uploaded
-                updatedData.image = req.body.image;
-            }
+        updatedData.image = req.body.image;
+      }
 
-            // 3. Find and execute update
-            const story =
-                await Story.findByIdAndUpdate(
-                    req.params.id,
-                    updatedData,
-                    { new: true }
-                );
+      const story = await Story.findByIdAndUpdate(
+        req.params.id,
+        updatedData,
+        { new: true }
+      );
 
-            if (!story) {
-                return res.status(404).json({ message: "Story not found" });
-            }
+      if (!story) {
+        return res.status(404).json({
+          message: "Story not found"
+        });
+      }
 
-            res.json(story);
+      res.json(story);
 
-        } catch (err) {
+    } catch (err) {
 
-            console.error(err);
+      console.error("EDIT ERROR:", err);
 
-            res.status(500).json({
-                error: err.message
-            });
-        }
+      res.status(500).json({
+        error: err.message
+      });
     }
+  }
 );
 
 
@@ -417,3 +403,4 @@ app.delete(
 );
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
