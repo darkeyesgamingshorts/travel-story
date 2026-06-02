@@ -139,6 +139,17 @@ app.get("/test-upload", async (req, res) => {
 });
 
 
+app.get("/cloudinary-check", (req,res)=>{
+
+  res.json({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    secret_exists: !!process.env.CLOUDINARY_API_SECRET
+  });
+
+});
+
+
 
 /* ================= HOME ================= */
 
