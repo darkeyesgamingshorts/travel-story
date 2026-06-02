@@ -122,20 +122,20 @@ const auth = (req, res, next) => {
 
 
 app.get("/test-upload", async (req, res) => {
-    try {
+  try {
 
-        const result = await cloudinary.uploader.upload(
-            "https://res.cloudinary.com/demo/image/upload/sample.jpg"
-        );
+    const result = await cloudinary.uploader.upload(
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO7Z6hQAAAAASUVORK5CYII="
+    );
 
-        res.json(result);
+    res.json(result);
 
-    } catch (err) {
+  } catch (err) {
 
-        console.error(err);
+    console.log(err);
 
-        res.status(500).json(err);
-    }
+    res.status(500).json(err);
+  }
 });
 
 
