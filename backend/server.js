@@ -30,9 +30,9 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 cloudinary.config({
-    cloud_name: process.env.monarch21,
-    api_key: process.env.729667948677943,
-    api_secret: process.env.Y5P1GFYqF8_yWbDQduPAP0H4zpo,
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 /* ================= DATABASE ================= */
