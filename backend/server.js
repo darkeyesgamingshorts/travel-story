@@ -16,13 +16,6 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-/* CREATE UPLOADS FOLDER IF NOT EXISTS */
-if (!fs.existsSync("uploads")) {
-    fs.mkdirSync("uploads", { recursive: true });
-}
-
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/assets", express.static("assets"));
 
 /* ================= CONFIG ================= */
@@ -71,10 +64,11 @@ const Story = mongoose.model(
     })
 );
 
-/* ================= MULTER ================= */
+/* ================= MULTER (FIXED FOR RENDER) ================= */
 
+// We use the operating system's default temp folder to bypass Render directory permission locks
 const storage = multer.diskStorage({
-    destination: "./uploads",
+    destination: "/tmp",
 
     filename: (req, file, cb) => {
         cb(
@@ -296,7 +290,10 @@ app.post(
 
                 imageUrl = result.secure_url;
 
-                fs.unlinkSync(req.file.path);
+                // Cleans up the temporary local file safely
+                if (fs.existsSync(req.file.path)) {
+                    fs.unlinkSync(req.file.path);
+                }
             }
 
             const story = new Story({
@@ -327,7 +324,7 @@ app.post(
     }
 );
 
-/* ================= EDIT STORY ================= */
+/* ================= EDIT STORY (FIXED) ================= */
 app.put(
     "/edit-travel-story/:id",
     auth,
@@ -336,6 +333,7 @@ app.put(
 
         try {
 
+            // 1. Build the updated fields map
             const updatedData = {
                 title: req.body.title,
                 story: req.body.story,
@@ -343,6 +341,7 @@ app.put(
                 visitedDate: req.body.visitedDate,
             };
 
+            // 2. If a new image was passed, upload it and append it to update map
             if (req.file) {
 
                 const result = await cloudinary.uploader.upload(
@@ -354,15 +353,25 @@ app.put(
 
                 updatedData.image = result.secure_url;
 
-                fs.unlinkSync(req.file.path);
+                if (fs.existsSync(req.file.path)) {
+                    fs.unlinkSync(req.file.path);
+                }
+            } else if (req.body.image) {
+                // Keep the old image URL intact if no new file is uploaded
+                updatedData.image = req.body.image;
             }
 
+            // 3. Find and execute update
             const story =
                 await Story.findByIdAndUpdate(
                     req.params.id,
                     updatedData,
                     { new: true }
                 );
+
+            if (!story) {
+                return res.status(404).json({ message: "Story not found" });
+            }
 
             res.json(story);
 
@@ -384,22 +393,13 @@ app.delete(
     "/delete-story/:id",
     auth,
     async (req, res) => {
-
-        await Story.findByIdAndDelete(
-            req.params.id
-        );
-
-        res.json({
-            message: "Deleted"
-        });
+        try {
+            await Story.findByIdAndDelete(req.params.id);
+            res.json({ success: true, message: "Story deleted successfully" });
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
     }
 );
 
-/* ================= SERVER ================= */
-
-app.listen(PORT, () => {
-
-    console.log(
-        `Server running on port ${PORT}`
-    );
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
