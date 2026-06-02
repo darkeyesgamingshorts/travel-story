@@ -34,6 +34,11 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
 
+  cloudinary.api.ping()
+  .then(res => console.log("=== CLOUDINARY SUCCESS ===", res))
+  .catch(err => console.error("=== CLOUDINARY FAILED ===", err.message));
+
+
 /* ================= MODELS ================= */
 
 const User = mongoose.model(
@@ -83,15 +88,16 @@ const upload = multer({ storage });
 
 /* ================= AUTH FIXED ================= */
 const auth = (req, res, next) => {
+
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
         return res.status(401).json({ message: "No token" });
     }
 
-    // CRITICAL: Ensure .split(" ")[1] has the [1] index at the end
+    // FIXED: Added the [1] index to correctly extract the token payload string
     const token = authHeader.startsWith("Bearer ")
-        ? authHeader.split(" ")[1] 
+        ? authHeader.split(" ")[1]
         : authHeader;
 
     try {
@@ -102,6 +108,7 @@ const auth = (req, res, next) => {
         return res.status(401).json({ message: "Invalid token" });
     }
 };
+
 
 
 
