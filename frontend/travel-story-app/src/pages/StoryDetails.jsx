@@ -74,13 +74,12 @@ const StoryDetails = () => {
 
           <div className="details-hero-image">
             <img
-              src={
-                story.image
-                  ? `${API_URL}/uploads/${story.image}`
-                  : "https://via.placeholder.com/800x500"
-              }
-              alt={story.title}
-            />
+                  src={
+                    story.image ||
+                    "http://via.placeholder.com/400"
+                  }
+                  alt={story.title}
+                />
           </div>
 
           <div className="details-body-content">
