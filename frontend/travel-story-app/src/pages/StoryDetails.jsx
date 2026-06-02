@@ -5,7 +5,6 @@ import "./StoryDetails.css";
 
 import API_URL from "../config";
 
-
 const StoryDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -14,14 +13,8 @@ const StoryDetails = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
     axios
-      .get(`${API_URL}/story/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      .get(`${API_URL}/story/${id}`)
       .then((res) => {
         setStory(res.data);
         setLoading(false);
@@ -74,12 +67,12 @@ const StoryDetails = () => {
 
           <div className="details-hero-image">
             <img
-                  src={
-                    story.image ||
-                    "http://via.placeholder.com/400"
-                  }
-                  alt={story.title}
-                />
+              src={
+                story.image ||
+                "https://via.placeholder.com/400"
+              }
+              alt={story.title}
+            />
           </div>
 
           <div className="details-body-content">
@@ -112,4 +105,4 @@ const StoryDetails = () => {
   );
 };
 
-export default StoryDetails;  
+export default StoryDetails;
