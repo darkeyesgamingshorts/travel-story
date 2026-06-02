@@ -34,10 +34,10 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
 
-// Connection test ping
-cloudinary.api.ping()
+  cloudinary.api.ping()
   .then(res => console.log("=== CLOUDINARY SUCCESS ===", res))
   .catch(err => console.error("=== CLOUDINARY FAILED ===", err.message));
+
 
 /* ================= MODELS ================= */
 
@@ -69,7 +69,7 @@ const Story = mongoose.model(
     })
 );
 
-/* ================= MULTER ================= */
+/* ================= MULTER (FIXED FOR RENDER) ================= */
 
 const storage = multer.diskStorage({
     destination: "/tmp",
@@ -85,35 +85,48 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-/* ================= AUTH ================= */
-
+/* ================= AUTH FIXED ================= */
 const auth = (req, res, next) => {
 
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-        return res.status(401).json({
-            message: "No token"
-        });
+        return res.status(401).json({ message: "No token" });
     }
 
+    // FIXED: Added the [1] index to correctly extract the token payload string
     const token = authHeader.startsWith("Bearer ")
-            ? authHeader.split(" ")[1]
-            : authHeader;
+        ? authHeader.split(" ")[1]
+        : authHeader;
 
     try {
-
         const decoded = jwt.verify(token, JWT_SECRET);
         req.user = decoded;
         next();
+    } catch (err) {
+        return res.status(401).json({ message: "Invalid token" });
+    }
+};
+
+
+
+app.get("/test-upload", async (req, res) => {
+    try {
+
+        const result = await cloudinary.uploader.upload(
+            "https://res.cloudinary.com/demo/image/upload/sample.jpg"
+        );
+
+        res.json(result);
 
     } catch (err) {
 
-        return res.status(401).json({
-            message: "Invalid token"
-        });
+        console.error(err);
+
+        res.status(500).json(err);
     }
-};
+});
+
 
 
 /* ================= HOME ================= */
@@ -129,8 +142,11 @@ app.post("/login", async (req, res) => {
 
     try {
 
-        const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        const { email, password } =
+            req.body;
+
+        const user =
+            await User.findOne({ email });
 
         if (!user) {
             return res.status(400).json({
@@ -138,7 +154,11 @@ app.post("/login", async (req, res) => {
             });
         }
 
-        const valid = await bcrypt.compare(password, user.password);
+        const valid =
+            await bcrypt.compare(
+                password,
+                user.password
+            );
 
         if (!valid) {
             return res.status(400).json({
@@ -146,11 +166,18 @@ app.post("/login", async (req, res) => {
             });
         }
 
-        const token = jwt.sign({ id: user._id }, JWT_SECRET);
+        const token = jwt.sign(
+            { id: user._id },
+            JWT_SECRET
+        );
 
-        res.json({ token, user });
+        res.json({
+            token,
+            user
+        });
 
     } catch (err) {
+
         res.status(500).json(err);
     }
 });
@@ -161,8 +188,14 @@ app.post("/create-account", async (req, res) => {
 
     try {
 
-        const { name, email, password } = req.body;
-        const existing = await User.findOne({ email });
+        const {
+            name,
+            email,
+            password
+        } = req.body;
+
+        const existing =
+            await User.findOne({ email });
 
         if (existing) {
             return res.status(400).json({
@@ -170,9 +203,14 @@ app.post("/create-account", async (req, res) => {
             });
         }
 
-        const hashed = await bcrypt.hash(password, 10);
+        const hashed =
+            await bcrypt.hash(
+                password,
+                10
+            );
 
-        const user = new User({
+        const user =
+            new User({
                 name,
                 email,
                 password: hashed
@@ -180,9 +218,12 @@ app.post("/create-account", async (req, res) => {
 
         await user.save();
 
-        res.json({ message: "Account created" });
+        res.json({
+            message: "Account created"
+        });
 
     } catch (err) {
+
         res.status(500).json(err);
     }
 });
@@ -191,31 +232,53 @@ app.post("/create-account", async (req, res) => {
 
 app.get("/public-stories", async (req, res) => {
   try {
-    const stories = await Story.find().sort({ createdAt: -1 });
+    const stories = await Story.find().sort({
+      createdAt: -1,
+    });
+
     res.json(stories);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      error: err.message,
+    });
   }
 });
 
 /* ================= USER STORIES ================= */
 
-app.get("/search-stories", auth, async (req, res) => {
-        const stories = await Story.find({ createdBy: req.user.id });
+app.get(
+    "/search-stories",
+    auth,
+    async (req, res) => {
+
+        const stories =
+            await Story.find({
+                createdBy:
+                    req.user.id
+            });
+
         res.json(stories);
     }
 );
 
 /* ================= STORY DETAILS ================= */
 
-app.get("/story/:id", auth, async (req, res) => {
-        const story = await Story.findById(req.params.id);
+app.get(
+    "/story/:id",
+    auth,
+    async (req, res) => {
+
+        const story =
+            await Story.findById(
+                req.params.id
+            );
+
         res.json(story);
     }
 );
 
-/* ================= ADD STORY (PRESET ENFORCED) ================= */
+/* ================= ADD STORY ================= */
 app.post(
     "/upload-image",
     auth,
@@ -226,17 +289,22 @@ app.post(
             let imageUrl = "";
 
             if (req.file) {
-                // FIXED: Explicitly attached upload_preset to authorize endpoint traffic
+
+                console.log("FILE:", req.file);
+
                 const result = await cloudinary.uploader.upload(
                     req.file.path,
                     {
+                        resource_type: "image",
                         folder: "travel-story",
-                        upload_preset: "ml_default" 
                     }
                 );
 
+                console.log("UPLOAD SUCCESS:", result.secure_url);
+
                 imageUrl = result.secure_url;
 
+                // Cleans up the temporary local file safely
                 if (fs.existsSync(req.file.path)) {
                     fs.unlinkSync(req.file.path);
                 }
@@ -260,13 +328,17 @@ app.post(
             });
 
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: err.message });
+
+            console.error("FULL ERROR:", JSON.stringify(err, null, 2));
+
+            res.status(500).json({
+                error: err.message
+            });
         }
     }
 );
 
-/* ================= EDIT STORY (PRESET ENFORCED) ================= */
+/* ================= EDIT STORY (FIXED) ================= */
 app.put(
     "/edit-travel-story/:id",
     auth,
@@ -275,6 +347,7 @@ app.put(
 
         try {
 
+            // 1. Build the updated fields map
             const updatedData = {
                 title: req.body.title,
                 story: req.body.story,
@@ -282,13 +355,13 @@ app.put(
                 visitedDate: req.body.visitedDate,
             };
 
+            // 2. If a new image was passed, upload it and append it to update map
             if (req.file) {
-                // FIXED: Explicitly attached upload_preset here as well
+
                 const result = await cloudinary.uploader.upload(
                     req.file.path,
                     {
-                        folder: "travel-story",
-                        upload_preset: "ml_default"
+                        folder: "travel-story"
                     }
                 );
 
@@ -298,10 +371,13 @@ app.put(
                     fs.unlinkSync(req.file.path);
                 }
             } else if (req.body.image) {
+                // Keep the old image URL intact if no new file is uploaded
                 updatedData.image = req.body.image;
             }
 
-            const story = await Story.findByIdAndUpdate(
+            // 3. Find and execute update
+            const story =
+                await Story.findByIdAndUpdate(
                     req.params.id,
                     updatedData,
                     { new: true }
@@ -314,8 +390,12 @@ app.put(
             res.json(story);
 
         } catch (err) {
+
             console.error(err);
-            res.status(500).json({ error: err.message });
+
+            res.status(500).json({
+                error: err.message
+            });
         }
     }
 );
