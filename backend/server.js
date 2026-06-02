@@ -335,12 +335,20 @@ app.post(
 
     } catch (err) {
 
-      console.error(err);
+  console.log("========== CLOUDINARY ERROR ==========");
+  console.log(err);
 
-      res.status(500).json({
-        error: err.message,
-      });
-    }
+  console.log("MESSAGE:", err.message);
+  console.log("HTTP:", err.http_code);
+
+  if (err.error) {
+    console.log("INNER ERROR:", err.error);
+  }
+
+  res.status(500).json({
+    error: err.message,
+  });
+}
   }
 );
 
@@ -388,12 +396,20 @@ app.put(
 
     } catch (err) {
 
-      console.error("EDIT ERROR:", err);
+  console.log("========== CLOUDINARY ERROR ==========");
+  console.log(err);
 
-      res.status(500).json({
-        error: err.message
-      });
-    }
+  console.log("MESSAGE:", err.message);
+  console.log("HTTP:", err.http_code);
+
+  if (err.error) {
+    console.log("INNER ERROR:", err.error);
+  }
+
+  res.status(500).json({
+    error: err.message,
+  });
+}
   }
 );
 
