@@ -14,7 +14,7 @@ const demoStories = [
     visitedLocation: "Tokyo Japan",
     visitedDate: "2026-05-13",
     image:
-      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1200",
+      "https://res.cloudinary.com/monarch21/image/upload/v1780395288/travel-story/file_wp426e.jpg",
   },
   {
     _id: "demo2",
