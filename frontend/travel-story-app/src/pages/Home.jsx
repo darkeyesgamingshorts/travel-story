@@ -137,7 +137,12 @@ const Home = () => {
 export default Home;
 
 
-/*import React, { useEffect, useState } from "react";
+
+
+
+/* THE PAST CODE WHICH I CHANGED ON 05-06-2026 
+
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
