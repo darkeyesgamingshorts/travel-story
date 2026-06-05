@@ -24,7 +24,7 @@ const demoStories = [
     visitedLocation: "Japan",
     visitedDate: "2030-12-28",
     image:
-      "https://upload.wikimedia.org/wikipedia/en/7/7d/Ash_Ketchum_Journeys.png",
+      "https://res.cloudinary.com/monarch21/image/upload/v1780394305/travel-story/file_t2kmz0.png",
   },
 ];
 
