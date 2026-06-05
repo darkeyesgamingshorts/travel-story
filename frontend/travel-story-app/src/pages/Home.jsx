@@ -5,9 +5,33 @@ import "./Home.css";
 
 import API_URL from "../config";
 
+const demoStories = [
+  {
+    _id: "demo1",
+    title: "Sketching Tokyo",
+    story:
+      "Himanshu's first morning in Tokyo began with the sharp, crisp bite of winter air. He caught the Yamanote Line and spent the day exploring the city.",
+    visitedLocation: "Tokyo Japan",
+    visitedDate: "2026-05-13",
+    image:
+      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1200",
+  },
+  {
+    _id: "demo2",
+    title: "Pokemon",
+    story:
+      "Aditya was the kind of child who believed cartoons and anime were more than just shows. Every day felt like a new adventure.",
+    visitedLocation: "Japan",
+    visitedDate: "2030-12-28",
+    image:
+      "https://upload.wikimedia.org/wikipedia/en/7/7d/Ash_Ketchum_Journeys.png",
+  },
+];
+
 const Home = () => {
   const navigate = useNavigate();
-  const [stories, setStories] = useState([]);
+
+  const [stories, setStories] = useState(demoStories);
 
   useEffect(() => {
     getPublicStories();
@@ -15,11 +39,23 @@ const Home = () => {
 
   const getPublicStories = async () => {
     try {
-      const response = await axios.get(`${API_URL}/public-stories`);
+      const response = await axios.get(
+        `${API_URL}/public-stories`
+      );
 
-      setStories(response.data || []);
+      if (
+        response.data &&
+        response.data.length > 0
+      ) {
+        setStories(response.data);
+      } else {
+        setStories(demoStories);
+      }
     } catch (error) {
       console.log(error);
+
+      // If API fails, show demo stories
+      setStories(demoStories);
     }
   };
 
@@ -52,14 +88,21 @@ const Home = () => {
               className="story-card"
               key={story._id}
               onClick={() =>
-                navigate(`/story/${story._id}`)
+                story._id.startsWith("demo")
+                  ? null
+                  : navigate(`/story/${story._id}`)
               }
+              style={{
+                cursor: story._id.startsWith("demo")
+                  ? "default"
+                  : "pointer",
+              }}
             >
               <div className="image-container">
                 <img
                   src={
                     story.image ||
-                    "http://via.placeholder.com/400"
+                    "https://via.placeholder.com/400"
                   }
                   alt={story.title}
                 />
@@ -75,7 +118,8 @@ const Home = () => {
                 </span>
 
                 <p>
-                  {story.story?.slice(0, 100)}...
+                  {story.story?.slice(0, 100)}
+                  ...
                 </p>
 
                 <div className="location-tag">
